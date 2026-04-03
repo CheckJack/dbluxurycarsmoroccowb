@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { Suspense } from 'react';
 import './globals.css';
 import Header from '@/components/Header';
 import ConditionalFooter from '@/components/ConditionalFooter';
@@ -17,7 +18,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <Header />
+        <Suspense fallback={null}>
+          <Header />
+        </Suspense>
         <main>{children}</main>
         <ConditionalFooter />
         <CookieBanner />

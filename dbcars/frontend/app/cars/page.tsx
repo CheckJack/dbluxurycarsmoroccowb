@@ -326,7 +326,7 @@ function CarsPageContent() {
               Our Cars
             </h1>
             <p className="text-lg md:text-xl text-gray-300 max-w-2xl">
-              Discover our premium collection of luxury vehicles
+              Discover our premium collection of vehicles
             </p>
           </div>
         </div>
@@ -336,7 +336,7 @@ function CarsPageContent() {
       <div className="bg-black min-h-screen">
       <div className="container mx-auto px-4 py-8">
         {/* Search and Quick Actions Bar */}
-        <div className="bg-zinc-900/50 backdrop-blur-sm rounded-xl shadow-sm border border-zinc-800 p-4 mb-6 relative z-50">
+        <div className="bg-zinc-900/50 backdrop-blur-sm rounded-xl shadow-sm border border-zinc-800 p-4 mb-6 relative z-10">
           <div className="flex flex-col lg:flex-row gap-4">
             {/* Search Bar */}
             <div className="flex-1 relative">

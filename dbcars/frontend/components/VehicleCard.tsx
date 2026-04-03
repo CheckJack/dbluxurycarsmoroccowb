@@ -52,7 +52,7 @@ export default function VehicleCard({ vehicle, searchParams, priority = false }:
       case 'luxury_sedans':
         return 'bg-blue-600/90 text-white';
       case 'economic':
-        return 'bg-green-600/90 text-white';
+        return 'bg-gray-600/90 text-white';
       case 'sportscars':
         return 'bg-red-600/90 text-white';
       case 'supercars':

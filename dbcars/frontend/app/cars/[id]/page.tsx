@@ -371,22 +371,6 @@ export default function VehicleDetailPage() {
     return categoryMap[category] || category.charAt(0).toUpperCase() + category.slice(1).replace(/_/g, ' ');
   };
 
-  const getCategoryColor = (category: string) => {
-    const colorMap: { [key: string]: string } = {
-      'luxury_sedans': 'bg-blue-500/20 text-blue-300 border-blue-500/30',
-      'luxury-sedans': 'bg-blue-500/20 text-blue-300 border-blue-500/30',
-      'economic': 'bg-green-500/20 text-green-300 border-green-500/30',
-      'sportscars': 'bg-red-500/20 text-red-300 border-red-500/30',
-      'sports-cars': 'bg-red-500/20 text-red-300 border-red-500/30',
-      'supercars': 'bg-purple-500/20 text-purple-300 border-purple-500/30',
-      'suvs': 'bg-orange-500/20 text-orange-300 border-orange-500/30',
-      'luxury': 'bg-blue-500/20 text-blue-300 border-blue-500/30',
-      'super_luxury': 'bg-purple-500/20 text-purple-300 border-purple-500/30',
-      'exotic': 'bg-orange-500/20 text-orange-300 border-orange-500/30',
-    };
-    return colorMap[category] || 'bg-gray-500/20 text-gray-300 border-gray-500/30';
-  };
-
   const specItems = [
     { label: 'Seats', value: vehicle.seats || 'N/A', icon: (
       <svg className="w-5 h-5 text-white/60" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
@@ -556,43 +540,6 @@ export default function VehicleDetailPage() {
           </div>
         )}
 
-        {/* Vehicle Info - Left Side */}
-        <div className="absolute left-0 bottom-0 md:top-0 md:bottom-0 right-0 z-20 flex flex-col justify-end md:justify-center px-4 md:px-0 pb-12 md:pb-0">
-          <div className="container mx-auto max-w-7xl md:px-8 w-full">
-            <div className="max-w-xl">
-            <div className="flex items-center gap-2 md:gap-3 mb-2 md:mb-3">
-              <span className={`px-2 md:px-3 py-0.5 md:py-1 rounded-full text-xs font-semibold border backdrop-blur-xl ${getCategoryColor(vehicle.category)}`}>
-                {getCategoryLabel(vehicle.category)}
-              </span>
-              {vehicle.year && (
-                <span className="text-white/50 text-xs md:text-sm font-light tracking-wide">{vehicle.year}</span>
-              )}
-            </div>
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-2 md:mb-3 tracking-tight leading-tight">
-              <span className="block text-white">{vehicle.make}</span>
-              <span className="block bg-gradient-to-r from-orange-400 via-orange-300 to-orange-400 bg-clip-text text-transparent animate-gradient pb-1 -mt-2 md:-mt-4">
-                {vehicle.model}
-              </span>
-            </h1>
-            {vehicle.color && (
-              <p className="text-white/50 text-xs md:text-sm font-light mb-3 md:mb-4">
-                Color: <span className="font-semibold capitalize text-white">{vehicle.color}</span>
-              </p>
-            )}
-            
-            {/* Price Badge - Below Color */}
-            <div className="inline-flex items-center gap-2 md:gap-3 bg-white/10 backdrop-blur-xl rounded-lg md:rounded-xl px-3 md:px-5 py-2 md:py-2.5 shadow-xl border border-white/20">
-              <div>
-                <p className="text-[10px] md:text-xs font-bold text-white/90 mb-0.5 uppercase tracking-wider leading-tight">Starting from</p>
-                <p className="text-lg md:text-xl font-bold text-white leading-none">€{Number(vehicle.base_price_daily || 0).toFixed(0)}</p>
-              </div>
-              <div className="h-6 md:h-8 w-px bg-white/30"></div>
-              <p className="text-[10px] md:text-xs font-semibold text-white/90 uppercase tracking-wide whitespace-nowrap">per day</p>
-            </div>
-            </div>
-          </div>
-        </div>
-
         {/* Scroll Indicator - Bottom Center */}
         <div className="absolute bottom-4 md:bottom-6 left-1/2 -translate-x-1/2 z-30 animate-bounce hidden sm:flex">
           <div className="flex flex-col items-center gap-1.5 text-white/80">
@@ -607,14 +554,14 @@ export default function VehicleDetailPage() {
       {/* Main Content */}
       <div className="relative bg-black">
         <div className="container mx-auto max-w-7xl px-4 md:px-8 py-8 md:py-16">
-          <div className="flex flex-col lg:flex-row gap-8 md:gap-12 items-start">
+          <div className="flex flex-col lg:flex-row gap-8 md:gap-12 items-start lg:min-w-0">
             {/* Left Content */}
-            <div className="flex-1 space-y-8 md:space-y-16 w-full">
+            <div className="min-w-0 flex-1 space-y-8 md:space-y-16 w-full">
               {/* Gallery */}
               {vehicleImages.length > 0 && (
-                <div>
+                <div className="min-w-0 max-w-full">
                   <h3 className="text-2xl md:text-3xl font-bold text-white mb-4 md:mb-6">Gallery</h3>
-                  <div className="flex gap-3 md:gap-4 overflow-x-auto pb-4 scrollbar-hide -mx-4 px-4 md:mx-0 md:px-0">
+                  <div className="flex gap-3 md:gap-4 overflow-x-auto pb-4 scrollbar-hide -mx-4 px-4 md:mx-0 md:px-0 min-w-0">
                     {vehicleImages.map((image: string, index: number) => {
                       const isSelected = index === safeImageIndex;
                       const imageUrl = getImageUrl(image);
@@ -698,7 +645,7 @@ export default function VehicleDetailPage() {
             </div>
 
             {/* Booking Widget - Sticky */}
-            <div className="w-full lg:w-[480px] lg:sticky lg:top-12 lg:self-start">
+            <div className="w-full lg:w-[480px] lg:min-w-[480px] lg:max-w-[480px] lg:shrink-0 lg:sticky lg:top-12 lg:self-start">
               <div className="bg-white/10 backdrop-blur-xl rounded-xl p-4 md:p-6 border border-white/20 shadow-xl">
                 <form
                   id="booking-form"

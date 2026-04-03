@@ -22,7 +22,7 @@ export default function Header() {
   const mobileMenuRef = useRef<HTMLDivElement>(null);
   
   // Memoize computed values to prevent unnecessary re-renders
-  const isHomePage = useMemo(() => pathname === '/', [pathname]);
+  const isHomePage = useMemo(() => pathname === '/home', [pathname]);
   const isAdminPage = useMemo(() => pathname?.startsWith('/admin'), [pathname]);
   const isAboutPage = useMemo(() => pathname === '/about', [pathname]);
   const isCarsListingPage = useMemo(() => pathname === '/cars', [pathname]);
@@ -41,28 +41,25 @@ export default function Header() {
   const lastScrollY = useRef(0);
   const rafId = useRef<number | null>(null);
   const scrollThreshold = 100;
-  const scrollDeltaThreshold = 12;
 
   useEffect(() => {
     if (!hasHeroHeader) return;
     const updateHeader = () => {
       const y = window.scrollY;
-      const pastTop = y > scrollThreshold;
+      const prevY = lastScrollY.current;
+      const delta = y - prevY;
 
       if (y <= scrollThreshold) {
         // At top: always visible and transparent
         setHeaderVisible(true);
         setShowBlackBg(false);
-      } else {
-        const scrollingUp = y < lastScrollY.current;
-        const delta = Math.abs(y - lastScrollY.current);
-
-        if (scrollingUp && delta >= scrollDeltaThreshold) {
+      } else if (delta !== 0) {
+        // Any real movement past the fold — slow scroll included (no min delta)
+        if (delta < 0) {
           setHeaderVisible(true);
-          setShowBlackBg(true); // past top + scrolling up = show header with black
-        } else if (!scrollingUp && delta >= scrollDeltaThreshold) {
+          setShowBlackBg(true);
+        } else {
           setHeaderVisible(false);
-          // keep showBlackBg as-is until next scroll up
         }
       }
       lastScrollY.current = y;
@@ -247,7 +244,7 @@ export default function Header() {
 
   return (
     <header
-      className={`z-50 ${headerBg} ${
+      className={`z-[100] ${headerBg} ${
         heroHeaderFixed ? 'fixed top-0 left-0 right-0' : 'relative'
       } ${heroHeaderHidden ? 'opacity-0 pointer-events-none' : 'opacity-100'} ${hasHeroHeader ? 'transition-none' : 'transition-colors duration-200'}`}
     >
@@ -255,7 +252,7 @@ export default function Header() {
         <div className="flex items-center justify-between">
           {/* Logo */}
           <Link
-            href="/"
+            href="/cars"
             prefetch={true}
             className="flex items-center transition-opacity hover:opacity-80"
           >
@@ -273,7 +270,8 @@ export default function Header() {
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
             <Link
-              href="/"
+              href="/home"
+              prefetch={true}
               className="transition-colors font-medium text-white hover:text-gray-200"
             >
               Home
@@ -377,7 +375,7 @@ export default function Header() {
               {/* Logo in Mobile Menu */}
               <div className="flex justify-center items-center pt-6 pb-4 px-6">
                 <Link
-                  href="/"
+                  href="/cars"
                   onClick={() => setIsMenuOpen(false)}
                   className="transition-opacity hover:opacity-80"
                 >
@@ -395,7 +393,7 @@ export default function Header() {
 
               <div className="flex flex-col py-6 px-6 space-y-2">
                 <Link
-                  href="/"
+                  href="/home"
                   className="block font-medium text-lg transition-all text-white hover:text-orange-500 hover:translate-x-1 py-3 px-4 rounded-lg hover:bg-white/5"
                   onClick={() => setIsMenuOpen(false)}
                 >

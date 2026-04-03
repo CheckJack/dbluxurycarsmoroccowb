@@ -39,15 +39,15 @@ export default function Footer() {
         {/* Logo Section */}
         <div className="mb-12 md:mb-16 pb-8 border-b border-gray-800/50" style={{ borderColor: 'rgba(31, 41, 55, 0.5)' }}>
           <Link
-            href="/"
-            className="inline-block transition-opacity hover:opacity-80"
+            href="/cars"
+            className="flex items-center transition-opacity hover:opacity-80"
           >
             <Image
               src="/logodb.png"
               alt="DB Luxury Cars"
-              width={220}
-              height={90}
-              className="h-16 md:h-20 lg:h-24 w-auto object-contain filter brightness-0 invert"
+              width={200}
+              height={80}
+              className="h-14 md:h-16 lg:h-20 w-auto object-contain"
               priority
               unoptimized
             />
@@ -78,7 +78,7 @@ export default function Footer() {
             <ul className="space-y-3">
               <li>
                 <Link 
-                  href="/" 
+                  href="/home" 
                   className="text-gray-300 hover:text-orange-500 transition-all duration-300 flex items-center gap-2 group text-[15px] no-underline"
                   style={{ color: '#d1d5db' }}
                 >

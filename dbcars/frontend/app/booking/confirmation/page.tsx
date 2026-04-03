@@ -78,7 +78,7 @@ function BookingConfirmationContent() {
             We couldn&apos;t find a booking with that reference. Please check your link or contact our team.
           </p>
           <Link
-            href="/"
+            href="/cars"
             className="inline-flex items-center gap-2 md:gap-4 px-6 md:px-14 py-3 md:py-7 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-black rounded-2xl md:rounded-3xl transition-all shadow-2xl hover:shadow-orange-500/50 transform hover:scale-105 text-base md:text-2xl"
           >
             Return to Home
@@ -321,7 +321,7 @@ function BookingConfirmationContent() {
 
           <div className="mt-8 md:mt-12 text-center">
             <Link
-              href="/"
+              href="/cars"
               className="inline-flex items-center gap-2 md:gap-3 px-6 md:px-10 py-3 md:py-4 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-bold text-base md:text-lg rounded-lg md:rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-[1.02]"
             >
               <svg className="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

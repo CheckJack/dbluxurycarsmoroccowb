@@ -132,26 +132,26 @@ function BookingPageContent() {
         {/* Breadcrumbs */}
         <nav className="mb-8 -mx-4 px-4 md:mx-0 md:px-0">
           <div className="flex items-center gap-2 md:gap-3 text-xs md:text-sm overflow-x-auto scrollbar-hide pb-2">
-            <Link href="/" className="text-white/60 hover:text-white transition-all font-medium backdrop-blur-xl bg-white/5 px-2 py-1.5 md:px-4 md:py-2 rounded-lg md:rounded-xl border border-white/10 hover:border-white/30 hover:scale-105 whitespace-nowrap flex-shrink-0">
+            <Link href="/cars" className="text-white/60 hover:text-white transition-colors font-medium whitespace-nowrap flex-shrink-0">
               Home
             </Link>
             <svg className="w-3 h-3 md:w-4 md:h-4 text-white/40 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
             </svg>
-            <Link href="/cars" className="text-white/60 hover:text-white transition-all font-medium backdrop-blur-xl bg-white/5 px-2 py-1.5 md:px-4 md:py-2 rounded-lg md:rounded-xl border border-white/10 hover:border-white/30 hover:scale-105 whitespace-nowrap flex-shrink-0">
+            <Link href="/cars" className="text-white/60 hover:text-white transition-colors font-medium whitespace-nowrap flex-shrink-0">
               Fleet
             </Link>
             <svg className="w-3 h-3 md:w-4 md:h-4 text-white/40 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
             </svg>
-            <Link href={`/cars/${vehicle.id}`} className="text-white/60 hover:text-white transition-all font-medium backdrop-blur-xl bg-white/5 px-2 py-1.5 md:px-4 md:py-2 rounded-lg md:rounded-xl border border-white/10 hover:border-white/30 hover:scale-105 whitespace-nowrap flex-shrink-0 max-w-[120px] md:max-w-none truncate">
+            <Link href={`/cars/${vehicle.id}`} className="text-white/60 hover:text-white transition-colors font-medium whitespace-nowrap flex-shrink-0 max-w-[120px] md:max-w-none truncate">
               <span className="hidden md:inline">{vehicle.make} {vehicle.model}</span>
               <span className="md:hidden">{vehicle.make}</span>
             </Link>
             <svg className="w-3 h-3 md:w-4 md:h-4 text-white/40 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
             </svg>
-            <span className="text-white font-bold backdrop-blur-xl bg-white/10 px-2 py-1.5 md:px-4 md:py-2 rounded-lg md:rounded-xl border border-white/20 whitespace-nowrap flex-shrink-0">Booking</span>
+            <span className="text-white font-semibold whitespace-nowrap flex-shrink-0">Booking</span>
           </div>
         </nav>
 
@@ -167,8 +167,8 @@ function BookingPageContent() {
         <div className="flex flex-col lg:flex-row gap-8 items-stretch">
           {/* Left Side - Vehicle Image (only on step 1) */}
           {showVehicleCard && (
-            <div className="w-full lg:w-1/2">
-              <div className="bg-white/5 backdrop-blur-xl rounded-2xl shadow-2xl overflow-hidden border border-white/10 h-full flex flex-col justify-between">
+            <div className="w-full lg:w-1/2 lg:self-start">
+              <div className="bg-white/5 backdrop-blur-xl rounded-2xl shadow-2xl overflow-hidden border border-white/10 flex flex-col">
                 {mainImage ? (
                   <div className="relative w-full h-[280px] overflow-hidden">
                     <Image
@@ -194,7 +194,7 @@ function BookingPageContent() {
                 )}
                 
                 {/* Vehicle Info Card */}
-                <div className="p-6 flex-1 flex flex-col">
+                <div className="p-6 flex flex-col">
                   <div className="flex items-start justify-between">
                     <div>
                       <h2 className="text-3xl font-bold text-white mb-2">
@@ -204,17 +204,14 @@ function BookingPageContent() {
                         <p className="text-white/50 text-base font-light">{vehicle.year}</p>
                       )}
                     </div>
-                    <div className="text-right bg-gradient-to-br from-orange-500/20 to-orange-600/20 backdrop-blur-xl rounded-xl px-4 py-3 border border-orange-500/30">
+                    <div className="text-right">
                       <p className="text-3xl font-bold text-orange-400">
                         €{Number(vehicle.base_price_daily || 0).toFixed(0)}
                       </p>
                       <p className="text-sm text-white/70 font-medium">per day</p>
                     </div>
                   </div>
-                  
-                  {/* Spacer */}
-                  <div className="flex-1"></div>
-                  
+
                   {/* Quick Specs */}
                   <div className="grid grid-cols-3 gap-3 pt-6 border-t border-white/10 mt-6">
                     <div className="bg-white/5 backdrop-blur-sm rounded-lg p-3 border border-white/10 hover:bg-white/10 transition-all">

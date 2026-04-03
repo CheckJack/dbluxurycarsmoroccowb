@@ -639,7 +639,7 @@ export const updateBlogPost = async (
     title?: string;
     content?: string;
     excerpt?: string;
-    featured_image?: string;
+    featured_image?: string | null;
     cover_image?: string | null;
     hero_image?: string | null;
     is_published?: boolean;

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import DatePicker from 'react-datepicker';
@@ -105,12 +105,35 @@ export default function BookingForm({
     console.log('Step changed to:', step);
   }, [step]);
 
+  const bookingExtrasList = useMemo(() => {
+    const linkCountRaw = vehicle?.vehicle_extras_link_count;
+    const linkCount =
+      typeof linkCountRaw === 'number'
+        ? linkCountRaw
+        : parseInt(String(linkCountRaw ?? '0'), 10) || 0;
+    const ids = vehicle?.available_extras;
+    if (!vehicle) return extras;
+    if (linkCount === 0) return extras;
+    if (!Array.isArray(ids) || ids.length === 0) return [];
+    const idSet = new Set(ids.map((x: unknown) => String(x)));
+    return extras.filter((e) => idSet.has(String(e.id)));
+  }, [vehicle, extras]);
+
+  useEffect(() => {
+    const allowed = new Set(bookingExtrasList.map((e) => e.id));
+    setFormData((prev) => {
+      const next = prev.selected_extras.filter((s) => allowed.has(s.id));
+      if (next.length === prev.selected_extras.length) return prev;
+      return { ...prev, selected_extras: next };
+    });
+  }, [bookingExtrasList]);
+
   useEffect(() => {
     if (formData.pickup_date && formData.dropoff_date) {
       checkVehicleAvailability();
       calculatePricing();
     }
-  }, [formData.pickup_date, formData.dropoff_date, formData.selected_extras, coupon]);
+  }, [formData.pickup_date, formData.dropoff_date, formData.selected_extras, coupon, bookingExtrasList]);
 
   const loadInitialData = async () => {
     try {
@@ -228,10 +251,10 @@ export default function BookingForm({
         basePrice = vehicle.base_price_weekly * weeks + vehicle.base_price_daily * remainingDays;
       }
 
-      // Calculate extras price
+      // Calculate extras price (only extras offered for this vehicle)
       let extrasPrice = 0;
         formData.selected_extras.forEach((selectedExtra) => {
-        const extra = extras.find((e) => e.id === selectedExtra.id);
+        const extra = bookingExtrasList.find((e) => e.id === selectedExtra.id);
         if (extra) {
           if (extra.price_type === 'per_day') {
             extrasPrice += extra.price * rentalDays * (selectedExtra.quantity || 1);
@@ -749,12 +772,41 @@ export default function BookingForm({
       {step === 2 && (
         <div className="space-y-4 md:space-y-6">
           <h3 className="text-xl md:text-2xl font-bold text-white mb-2">Additional Services</h3>
-          <p className="text-sm md:text-base text-white/70 mb-4 md:mb-6">Enhance your rental experience with our premium add-ons</p>
+          <p className="text-sm md:text-base text-white/70 mb-4 md:mb-6">
+            {bookingExtrasList.length > 0
+              ? 'Enhance your rental experience with our premium add-ons'
+              : (vehicle?.vehicle_extras_link_count ?? 0) > 0
+                ? 'Optional add-ons for this vehicle'
+                : 'Enhance your rental experience with our premium add-ons'}
+          </p>
           
           <div className="flex flex-col lg:flex-row gap-6">
             {/* Left Side - Extras List */}
             <div className="w-full lg:w-[70%] space-y-4">
-            {extras.map((extra) => {
+            {bookingExtrasList.length === 0 ? (
+              <div className="p-5 md:p-8 rounded-xl border border-white/10 bg-white/5 backdrop-blur-xl text-center md:text-left">
+                <div className="flex flex-col md:flex-row md:items-start gap-4">
+                  <div className="mx-auto md:mx-0 flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-white/10 text-orange-400">
+                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </div>
+                  <div className="space-y-2">
+                    <p className="font-semibold text-white text-base md:text-lg">
+                      {(vehicle?.vehicle_extras_link_count ?? 0) > 0
+                        ? 'No add-ons are available for this vehicle'
+                        : 'No additional services are available right now'}
+                    </p>
+                    <p className="text-sm md:text-base text-white/65 leading-relaxed">
+                      {(vehicle?.vehicle_extras_link_count ?? 0) > 0
+                        ? 'This car does not have any optional extras assigned to it, so there is nothing to add at this step. Your rental price is based on the vehicle and dates you already selected. You can continue to checkout whenever you are ready.'
+                        : 'There are no optional services in our catalog at the moment. You can continue to checkout with your rental only.'}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            ) : (
+            bookingExtrasList.map((extra) => {
               const isSelected = formData.selected_extras.some((e) => e.id === extra.id);
               return (
                 <label
@@ -792,7 +844,8 @@ export default function BookingForm({
                   </span>
                 </label>
               );
-            })}
+            })
+            )}
             </div>
 
             {/* Right Side - Vehicle Image and Pricing Summary */}

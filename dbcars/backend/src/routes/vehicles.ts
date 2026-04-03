@@ -285,9 +285,16 @@ router.get('/:id', async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
 
-    // First, get the vehicle basic info
+    // Vehicle plus per-vehicle extras: when vehicle_extras_link_count > 0, booking UI filters to available_extras; when 0, all catalog extras apply (legacy).
     const vehicleResult = await pool.query(
-      `SELECT * FROM vehicles WHERE id = $1 AND is_active = true`,
+      `SELECT v.*,
+        (SELECT COUNT(*)::int FROM vehicle_extras ve WHERE ve.vehicle_id = v.id) AS vehicle_extras_link_count,
+        COALESCE(
+          (SELECT array_agg(ve2.extra_id ORDER BY ve2.created_at) FROM vehicle_extras ve2 WHERE ve2.vehicle_id = v.id),
+          ARRAY[]::uuid[]
+        ) AS available_extras
+       FROM vehicles v
+       WHERE v.id = $1 AND v.is_active = true`,
       [id]
     );
 

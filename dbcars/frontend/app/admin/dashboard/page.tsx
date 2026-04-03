@@ -227,7 +227,7 @@ export default function AdminDashboard() {
       ]
     };
     
-    return mockData[type] || [];
+    return (mockData[type] || []) as AdminBooking[];
   };
 
   const loadPendingBookings = async () => {

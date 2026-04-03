@@ -165,7 +165,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             </button>
           </div>
           <Link
-            href="/"
+            href="/cars"
             className="w-full px-4 py-2.5 bg-gradient-to-r from-orange-600 to-orange-500 text-white rounded-xl hover:from-orange-700 hover:to-orange-600 transition-all text-sm font-semibold flex items-center justify-center gap-2 shadow-lg hover:shadow-xl hover:scale-[1.02] group"
           >
             <Home className="w-5 h-5 flex-shrink-0 transition-transform" />
