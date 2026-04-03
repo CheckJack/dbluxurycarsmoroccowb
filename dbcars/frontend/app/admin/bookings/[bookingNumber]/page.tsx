@@ -106,12 +106,25 @@ export default function BookingDetailPage() {
     }
   };
 
-  const handleStatusUpdate = async (newStatus: string, paymentLinkValue?: string) => {
+  const handleStatusUpdate = async (newStatus: string, paymentLinkValue?: string, notesValue?: string) => {
     if (!booking) return;
     
     try {
       setUpdating(true);
-      await updateBookingStatus(booking.id, newStatus, undefined, paymentLinkValue);
+      
+      // For cancellation, provide a default note if none is provided
+      let notes = notesValue;
+      if (newStatus === 'cancelled' && !notes) {
+        notes = 'Booking cancelled by admin';
+      }
+      
+      // For confirmed status, use existing payment link if available and none provided
+      let paymentLink = paymentLinkValue;
+      if (newStatus === 'confirmed' && !paymentLink && booking.payment_link) {
+        paymentLink = booking.payment_link;
+      }
+      
+      await updateBookingStatus(booking.id, newStatus, notes, paymentLink);
       toast.success('Booking status updated successfully');
       await loadBooking();
       if (paymentLinkValue) {
@@ -119,7 +132,8 @@ export default function BookingDetailPage() {
       }
     } catch (error: any) {
       console.error('Error updating booking status:', error);
-      toast.error(error.response?.data?.error || 'Failed to update booking status');
+      const errorMessage = error.response?.data?.error || error.message || 'Failed to update booking status';
+      toast.error(errorMessage);
     } finally {
       setUpdating(false);
     }

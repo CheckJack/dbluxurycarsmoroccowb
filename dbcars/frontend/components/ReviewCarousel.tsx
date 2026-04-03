@@ -29,121 +29,121 @@ const defaultReviews: Review[] = [
   {
     id: 1,
     name: "Sarah Chen",
-    role: "Product Manager",
-    company: "TechFlow Solutions",
+    role: "Business Traveler",
+    company: "London, UK",
     avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&h=150&fit=crop&crop=face",
     rating: 5,
-    text: "The attention to detail and innovative features have completely transformed our workflow. This is exactly what we've been looking for. Highly recommended!",
+    text: "Airport pickup in Marrakech was perfectly on time and the car was immaculate. Smooth handover, clear communication, and a truly premium experience from start to finish.",
     date: "2 weeks ago"
   },
   {
     id: 2,
     name: "Michael Rodriguez",
-    role: "CTO",
-    company: "InnovateSphere",
+    role: "Couple Getaway",
+    company: "Madrid, Spain",
     avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face",
     rating: 5,
-    text: "Implementation was seamless and the results exceeded our expectations. The platform's flexibility is remarkable and the support team is outstanding.",
+    text: "We booked for a weekend in Marrakech and the service felt five-star. The vehicle was spotless, the delivery was quick, and the team was responsive the whole time.",
     date: "1 month ago"
   },
   {
     id: 3,
     name: "Emily Watson",
-    role: "Operations Director",
-    company: "CloudScale",
+    role: "Family Trip",
+    company: "Paris, France",
     avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face",
     rating: 5,
-    text: "This solution has significantly improved our team's productivity. The intuitive interface makes complex tasks simple and efficient.",
+    text: "The booking was easy and the team suggested the right car for our luggage and kids. Great condition, comfortable drive, and a very professional handover.",
     date: "3 weeks ago"
   },
   {
     id: 4,
     name: "James Kim",
-    role: "Engineering Lead",
-    company: "DataPro",
+    role: "Executive Transfer",
+    company: "Dubai, UAE",
     avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face",
     rating: 5,
-    text: "Outstanding support and robust features. It's rare to find a product that delivers on all its promises. We're extremely satisfied.",
+    text: "Chauffeur service was discreet and punctual. The ride quality was excellent and the driver knew the best routes in the city — very smooth and secure.",
     date: "1 week ago"
   },
   {
     id: 5,
     name: "Lisa Thompson",
-    role: "VP of Technology",
-    company: "FutureNet",
+    role: "Event Guest",
+    company: "Marrakech, Morocco",
     avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&h=150&fit=crop&crop=face",
     rating: 5,
-    text: "The scalability and performance have been game-changing for our organization. Highly recommend to any growing business.",
+    text: "We needed a luxury car for a special event and everything was flawless. The car looked incredible and arrived exactly when promised. Highly recommended.",
     date: "2 months ago"
   },
   {
     id: 6,
     name: "David Martinez",
-    role: "CEO",
-    company: "StartupHub",
+    role: "Business Owner",
+    company: "Casablanca, Morocco",
     avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop&crop=face",
     rating: 5,
-    text: "Exceptional service and premium quality. The team went above and beyond to ensure our satisfaction. Truly outstanding experience!",
+    text: "I’ve rented several times and the consistency is what stands out: clean cars, transparent terms, and fast support on WhatsApp. Real premium service.",
     date: "3 weeks ago"
   },
   {
     id: 7,
     name: "Rachel Green",
-    role: "Marketing Director",
-    company: "BrandVision",
+    role: "Content Creator",
+    company: "Berlin, Germany",
     avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&h=150&fit=crop&crop=face",
     rating: 5,
-    text: "Professional, reliable, and absolutely stunning vehicles. Every detail was perfect. We'll definitely be back for future events.",
+    text: "The fleet is stunning and the delivery service made it effortless. Perfect for shoots and city driving — the car was in pristine condition.",
     date: "1 month ago"
   },
   {
     id: 8,
     name: "Thomas Anderson",
-    role: "Finance Director",
-    company: "CapitalFlow",
+    role: "Road Trip",
+    company: "Amsterdam, Netherlands",
     avatar: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=150&h=150&fit=crop&crop=face",
     rating: 5,
-    text: "The booking process was seamless and the vehicle exceeded all expectations. Top-tier service from start to finish.",
+    text: "We drove from Marrakech to the coast and the car was perfect — powerful, comfortable, and spotless. Easy pickup and return with no stress.",
     date: "2 weeks ago"
   },
   {
     id: 9,
     name: "Sophie Laurent",
-    role: "Event Coordinator",
-    company: "Elite Events",
+    role: "Corporate Guest",
+    company: "Geneva, Switzerland",
     avatar: "https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=150&h=150&fit=crop&crop=face",
     rating: 5,
-    text: "Perfect for our corporate events. The luxury vehicles made a lasting impression on our clients. Highly professional service.",
+    text: "Our guests were impressed by the professionalism and presentation. The team handled scheduling changes smoothly and the vehicles were flawless.",
     date: "4 weeks ago"
   },
   {
     id: 10,
     name: "Robert Chen",
-    role: "Business Owner",
-    company: "TechStart Inc",
+    role: "Airport Delivery",
+    company: "Toronto, Canada",
     avatar: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=150&h=150&fit=crop&crop=face",
     rating: 5,
-    text: "Outstanding customer service and immaculate vehicles. The attention to detail is remarkable. Worth every penny!",
+    text: "They delivered the car directly to the airport and the paperwork took minutes. Great communication, no surprises, and an excellent vehicle.",
     date: "1 week ago"
   },
   {
     id: 11,
     name: "Amanda Foster",
-    role: "Operations Manager",
-    company: "Global Logistics",
+    role: "Hotel Delivery",
+    company: "Marrakech, Morocco",
     avatar: "https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=150&h=150&fit=crop&crop=face",
     rating: 5,
-    text: "Reliable, luxurious, and professional. The entire experience was flawless. I couldn't have asked for better service.",
+    text: "Delivered to our hotel exactly on time and the car was sparkling clean. Very polite staff and an overall smooth, luxury experience.",
     date: "3 weeks ago"
   },
   {
     id: 12,
     name: "Christopher Lee",
-    role: "Executive Director",
-    company: "Premier Holdings",
+    role: "VIP Service",
+    company: "New York, USA",
     avatar: "https://images.unsplash.com/photo-1507591064344-4c6cefdb1f77?w=150&h=150&fit=crop&crop=face",
     rating: 5,
-    text: "The premium fleet and exceptional service set a new standard. Our clients were thoroughly impressed. Excellent work!",
+    text: "Discreet, premium, and reliable. From booking to return, everything was handled professionally and the vehicle was exactly as advertised.",
     date: "2 months ago"
   }
 ];
@@ -271,7 +271,7 @@ export function ReviewCarousel({
             transition={{ duration: 0.6, delay: 0.2 }}
             className="text-white/80 text-lg md:text-xl max-w-2xl mx-auto font-light leading-relaxed"
           >
-            Trusted by industry leaders worldwide
+            Premium car rental & chauffeur service across Morocco
           </motion.p>
         </div>
 

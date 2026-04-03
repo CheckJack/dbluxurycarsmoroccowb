@@ -233,7 +233,7 @@ export default function FAQPage() {
   return (
     <>
       {/* Hero Section */}
-      <section className="relative w-full h-[40vh] min-h-[300px] overflow-hidden">
+      <section className="relative w-full h-[48vh] min-h-[360px] overflow-hidden">
         <div className="absolute inset-0 z-0">
           <Image
             src="/herofaq.png"
@@ -245,13 +245,13 @@ export default function FAQPage() {
           />
         </div>
         <div className="absolute inset-0 bg-black/50 z-10"></div>
-        <div className="relative z-20 container mx-auto px-4 md:px-6 lg:px-12 h-full flex items-center">
+        <div className="relative z-20 container mx-auto px-4 md:px-6 lg:px-12 h-full flex items-end pb-16 md:pb-24">
           <div className="text-white">
             <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight leading-tight mb-4">
-              Frequently Asked Questions
+              FAQ
             </h1>
             <p className="text-lg md:text-xl text-gray-300 max-w-2xl">
-              Find answers to common questions about our luxury car rental services in Morocco
+              Find answer to common question about our services
             </p>
           </div>
         </div>

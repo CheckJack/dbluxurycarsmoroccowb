@@ -1073,10 +1073,12 @@ export default function AdminBookingsPage() {
                           <span className="font-bold">-{formatCurrency(parseFloat(bookingDetails.discount_amount || 0))}</span>
                         </div>
                       )}
-                      <div className="flex justify-between items-center border-t-2 border-gray-700 pt-3 font-bold text-xl text-white">
-                        <span>Total:</span>
-                        <span>{formatCurrency(parseFloat(bookingDetails.total_price || 0))}</span>
-                      </div>
+                      {(!bookingDetails.booking_extras || !Array.isArray(bookingDetails.booking_extras) || bookingDetails.booking_extras.length === 0) && (
+                        <div className="flex justify-between items-center border-t-2 border-gray-700 pt-3 font-bold text-xl text-white">
+                          <span>Total:</span>
+                          <span>{formatCurrency(parseFloat(bookingDetails.total_price || 0))}</span>
+                        </div>
+                      )}
                     </div>
                   </div>
 
@@ -1091,6 +1093,10 @@ export default function AdminBookingsPage() {
                             <span className="font-bold text-white">{formatCurrency(parseFloat(extra.price || 0))}</span>
                           </div>
                         ))}
+                      </div>
+                      <div className="flex justify-between items-center border-t-2 border-gray-700 pt-3 mt-3 font-bold text-xl text-white">
+                        <span>Total:</span>
+                        <span>{formatCurrency(parseFloat(bookingDetails.total_price || 0))}</span>
                       </div>
                     </div>
                   )}
@@ -1249,7 +1255,7 @@ export default function AdminBookingsPage() {
                   handleStatusUpdate(bookingToCancel, 'cancelled');
                 }}
                 disabled={!cancelNotes.trim() || !bookingToCancel}
-                className="w-full sm:flex-1 bg-gradient-to-r from-red-600 to-red-500 text-white px-4 sm:px-6 py-2.5 sm:py-3 rounded-xl text-sm sm:text-base font-semibold hover:from-red-700 hover:to-red-600 disabled:bg-gray-400 disabled:cursor-not-allowed transition-all shadow-md hover:shadow-lg"
+                className="w-full sm:flex-1 bg-gradient-to-r from-red-600 to-red-500 text-white px-3 sm:px-4 py-2.5 sm:py-3 rounded-xl text-xs sm:text-sm font-semibold hover:from-red-700 hover:to-red-600 disabled:bg-gray-400 disabled:cursor-not-allowed transition-all shadow-md hover:shadow-lg whitespace-nowrap"
               >
                 Confirm Cancellation
               </button>
@@ -1259,7 +1265,7 @@ export default function AdminBookingsPage() {
                   setCancelNotes('');
                   setBookingToCancel(null);
                 }}
-                className="w-full sm:flex-1 bg-gray-800 text-white px-4 sm:px-6 py-2.5 sm:py-3 rounded-xl text-sm sm:text-base font-semibold hover:bg-gray-700 transition-all"
+                className="w-full sm:flex-1 bg-gray-800 text-white px-3 sm:px-4 py-2.5 sm:py-3 rounded-xl text-xs sm:text-sm font-semibold hover:bg-gray-700 transition-all whitespace-nowrap"
               >
                 Keep Booking
               </button>

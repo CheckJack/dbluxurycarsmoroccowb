@@ -36,6 +36,7 @@ export default function AvailabilityPage() {
   const [month, setMonth] = useState(new Date().getMonth() + 1);
   const [year, setYear] = useState(new Date().getFullYear());
   const [selectedVehicle, setSelectedVehicle] = useState<string | null>(null);
+  const [hasMadeSelection, setHasMadeSelection] = useState(false);
   const [selectedDates, setSelectedDates] = useState<Date[]>([]);
   const [locations, setLocations] = useState<any[]>([]);
   const [vehiclePanelCollapsed, setVehiclePanelCollapsed] = useState(false);
@@ -97,13 +98,7 @@ export default function AvailabilityPage() {
     loadLocations();
   }, []);
 
-  // Auto-select first vehicle when vehicles list loads
-  useEffect(() => {
-    if (vehicles && vehicles.length > 0 && !selectedVehicle && !filters.vehicleId) {
-      console.log('Auto-selecting first vehicle:', vehicles[0].id);
-      setSelectedVehicle(vehicles[0].id);
-    }
-  }, [vehicles, selectedVehicle, filters.vehicleId]);
+  // Removed auto-select - user must manually select a vehicle
 
   // Keyboard shortcuts
   useKeyboardShortcuts({
@@ -399,6 +394,11 @@ export default function AvailabilityPage() {
         }}
         onSearchChange={setSearchQuery}
         searchQuery={searchQuery}
+        vehicles={vehicles}
+        onVehicleSelect={(vehicleId) => {
+          setSelectedVehicle(vehicleId);
+          setHasMadeSelection(true);
+        }}
         onExport={async () => {
           try {
             const startDate = new Date(year, month - 1, 1);
@@ -439,7 +439,10 @@ export default function AvailabilityPage() {
           availabilityData={availabilityData}
           selectedVehicle={selectedVehicle}
           searchQuery={searchQuery}
-          onVehicleSelect={setSelectedVehicle}
+          onVehicleSelect={(vehicleId) => {
+            setSelectedVehicle(vehicleId);
+            setHasMadeSelection(true);
+          }}
           onSubunitStatusChange={handleSubunitStatusChange}
           onStatusClick={handleStatusClick}
           loadingSubunits={loading}
@@ -449,15 +452,16 @@ export default function AvailabilityPage() {
 
         {/* Right Panel: Calendar - Hidden on mobile */}
         <div className="hidden lg:flex flex-1 flex-col min-h-0 bg-gray-900 border-l border-gray-800">
-          {!selectedVehicle && (
+          {!hasMadeSelection && (
             <div className="flex items-center justify-center h-full bg-gray-900 p-4">
               <div className="text-center">
                 <Calendar className="w-12 h-12 text-gray-600 mx-auto mb-4" />
-                <p className="text-gray-400 text-sm sm:text-base">Select a vehicle to view calendar</p>
+                <p className="text-gray-400 text-sm sm:text-base mb-2">Select a vehicle or "All Cars" to view calendar</p>
+                <p className="text-gray-500 text-xs">Choose a specific vehicle to see its availability, or select "All Cars" to view all vehicles</p>
               </div>
             </div>
           )}
-          {selectedVehicle && (
+          {hasMadeSelection && (
             <CalendarPanel
               month={month}
               year={year}

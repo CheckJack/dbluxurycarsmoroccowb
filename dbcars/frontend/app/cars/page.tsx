@@ -306,9 +306,9 @@ function CarsPageContent() {
   return (
     <>
       {/* Hero Section */}
-      <section className="relative w-full h-[40vh] min-h-[300px] overflow-hidden">
+      <section className="relative w-full h-[48vh] min-h-[360px] overflow-hidden">
         {/* Background Image */}
-        <div className="absolute inset-0">
+        <div className="absolute inset-0 z-0">
           <Image
             src="/hero-cars.jpg"
             alt="Luxury car collection"
@@ -320,7 +320,7 @@ function CarsPageContent() {
           />
           <div className="absolute inset-0 bg-gradient-to-br from-black/60 via-black/50 to-black/60"></div>
         </div>
-        <div className="relative z-20 container mx-auto px-4 md:px-6 lg:px-12 h-full flex items-center">
+        <div className="relative z-20 container mx-auto px-4 md:px-6 lg:px-12 h-full flex items-end pb-16 md:pb-24">
           <div className="text-white">
             <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight leading-tight mb-4">
               Our Cars

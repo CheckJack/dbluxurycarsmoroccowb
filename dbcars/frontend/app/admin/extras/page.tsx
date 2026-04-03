@@ -28,6 +28,7 @@ import {
 import StatusBadge from '@/components/admin/StatusBadge';
 import LoadingSpinner from '@/components/admin/LoadingSpinner';
 import EmptyState from '@/components/admin/EmptyState';
+import DragDropUpload from '@/components/admin/DragDropUpload';
 
 export default function AdminExtrasPage() {
   const [extras, setExtras] = useState<any[]>([]);
@@ -132,8 +133,8 @@ export default function AdminExtrasPage() {
     setCoverImageKey((prev) => prev + 1);
   };
 
-  const handleCoverImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
+  const handleCoverImageUpload = async (files: File[]) => {
+    const file = files?.[0];
     if (!file) return;
 
     setUploadingCoverImage(true);
@@ -487,41 +488,35 @@ export default function AdminExtrasPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-gray-300 mb-2">
-                    Cover Photo <span className="text-gray-500 text-xs font-normal">(Displayed on booking page)</span>
-                  </label>
-                  <div className="space-y-3">
-                    <div className="relative">
-                      <input
-                        key={coverImageKey}
-                        type="file"
-                        accept="image/*"
-                        onChange={handleCoverImageUpload}
-                        className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-gradient-to-r file:from-blue-600 file:to-blue-500 file:text-white hover:file:from-blue-700 hover:file:to-blue-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all cursor-pointer"
-                        disabled={uploadingCoverImage}
-                      />
+                  <DragDropUpload
+                    onFilesSelected={handleCoverImageUpload}
+                    accept="image/*"
+                    multiple={false}
+                    disabled={uploadingCoverImage}
+                    maxSize={5}
+                    label="Cover Photo"
+                    helperText="Displayed on booking page. Max 5MB."
+                  />
+                  {uploadingCoverImage && (
+                    <div className="mt-2 flex items-center gap-2 text-sm text-blue-600">
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
+                      Uploading...
                     </div>
-                    {uploadingCoverImage && (
-                      <div className="flex items-center gap-2 text-sm text-blue-600">
-                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
-                        Uploading...
+                  )}
+                  {formData.cover_image && (
+                    <div className="mt-3">
+                      <div className="relative w-full sm:w-48 h-48 sm:h-36 rounded-xl overflow-hidden border-2 border-gray-800 shadow-sm">
+                        <img
+                          src={getImageUrl(formData.cover_image) || ''}
+                          alt="Cover"
+                          className="w-full h-full object-cover"
+                          onError={(e) => {
+                            (e.target as HTMLImageElement).src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="200" height="150"%3E%3Crect fill="%23e5e7eb" width="200" height="150"/%3E%3Ctext fill="%239ca3af" font-family="sans-serif" font-size="14" x="50%25" y="50%25" text-anchor="middle" dy=".3em"%3EInvalid Image%3C/text%3E%3C/svg%3E';
+                          }}
+                        />
                       </div>
-                    )}
-                    {formData.cover_image && (
-                      <div className="mt-3">
-                        <div className="relative w-full sm:w-48 h-48 sm:h-36 rounded-xl overflow-hidden border-2 border-gray-800 shadow-sm">
-                          <img
-                            src={getImageUrl(formData.cover_image) || ''}
-                            alt="Cover"
-                            className="w-full h-full object-cover"
-                            onError={(e) => {
-                              (e.target as HTMLImageElement).src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="200" height="150"%3E%3Crect fill="%23e5e7eb" width="200" height="150"/%3E%3Ctext fill="%239ca3af" font-family="sans-serif" font-size="14" x="50%25" y="50%25" text-anchor="middle" dy=".3em"%3EInvalid Image%3C/text%3E%3C/svg%3E';
-                            }}
-                          />
-                        </div>
-                      </div>
-                    )}
-                  </div>
+                    </div>
+                  )}
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

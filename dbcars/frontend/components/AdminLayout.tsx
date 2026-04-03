@@ -261,6 +261,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         ${sidebarOpen ? 'lg:ml-64' : 'lg:ml-20'}
         pt-16 lg:pt-0
         overflow-y-auto
+        bg-black
       `}>
         <div className="container mx-auto px-4 sm:px-6 py-4 sm:py-6 lg:py-8 max-w-7xl min-h-full">{children}</div>
       </div>

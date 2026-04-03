@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { ChevronLeft, ChevronRight, Search, Car } from 'lucide-react';
 import VehicleCard from './VehicleCard';
 import EmptyState from '@/components/admin/EmptyState';
@@ -33,6 +33,8 @@ export default function VehiclePanel({
   onToggleCollapse,
 }: VehiclePanelProps) {
   const [localSearch, setLocalSearch] = useState(searchQuery);
+  const [showDropdown, setShowDropdown] = useState(false);
+  const searchWrapperRef = useRef<HTMLDivElement>(null);
 
   // Merge availability data with vehicles
   const vehiclesWithAvailability = vehicles.map((vehicle) => {
@@ -50,7 +52,21 @@ export default function VehiclePanel({
     };
   });
 
-  // Filter vehicles by search
+  // Filter vehicles by search for dropdown - match from start
+  const searchResults = vehiclesWithAvailability.filter((vehicle) => {
+    if (!localSearch) return false;
+    const search = localSearch.toLowerCase().trim();
+    const make = vehicle.make?.toLowerCase() || '';
+    const model = vehicle.model?.toLowerCase() || '';
+    const fullName = `${make} ${model}`.trim();
+    return (
+      make.startsWith(search) ||
+      model.startsWith(search) ||
+      fullName.startsWith(search)
+    );
+  });
+
+  // Filter vehicles by search for main list
   const filteredVehicles = vehiclesWithAvailability.filter((vehicle) => {
     if (!localSearch) return true;
     const search = localSearch.toLowerCase();
@@ -60,6 +76,33 @@ export default function VehiclePanel({
       vehicle.year?.toString().includes(search)
     );
   });
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (searchWrapperRef.current && !searchWrapperRef.current.contains(event.target as Node)) {
+        setShowDropdown(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  // Show dropdown when typing
+  useEffect(() => {
+    if (localSearch && searchResults.length > 0) {
+      setShowDropdown(true);
+    } else {
+      setShowDropdown(false);
+    }
+  }, [localSearch, vehicles.length]);
+
+  const handleVehicleSelectFromDropdown = (vehicleId: string) => {
+    onVehicleSelect(vehicleId);
+    setLocalSearch('');
+    setShowDropdown(false);
+  };
 
   if (collapsed) {
     return (
@@ -94,20 +137,70 @@ export default function VehiclePanel({
 
       {/* Search */}
       <div className="px-4 sm:px-6 py-3 sm:py-4 border-b border-gray-800 bg-gray-900 flex-shrink-0">
-        <div className="relative">
-          <Search className="absolute left-2 sm:left-3 top-1/2 -translate-y-1/2 w-4 sm:w-5 h-4 sm:h-5 text-gray-400 pointer-events-none" />
+        <div ref={searchWrapperRef} className="relative">
+          <Search className="absolute left-2 sm:left-3 top-1/2 -translate-y-1/2 w-4 sm:w-5 h-4 sm:h-5 text-gray-400 pointer-events-none z-10" />
           <input
             type="text"
             value={localSearch}
             onChange={(e) => setLocalSearch(e.target.value)}
+            onFocus={() => {
+              if (localSearch && searchResults.length > 0) {
+                setShowDropdown(true);
+              }
+            }}
             placeholder="Search vehicles..."
-            className="w-full pl-8 sm:pl-10 pr-3 sm:pr-4 py-2 sm:py-2.5 text-xs sm:text-sm border border-gray-700 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all"
+            className="w-full pl-8 sm:pl-10 pr-3 sm:pr-4 py-2 sm:py-2.5 text-xs sm:text-sm text-white bg-gray-800 border border-gray-700 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all placeholder-gray-400"
           />
+          
+          {/* Dropdown Results */}
+          {showDropdown && searchResults.length > 0 && (
+            <div className="absolute top-full left-0 right-0 mt-1 bg-gray-800 border border-gray-700 rounded-xl shadow-xl z-50 max-h-64 overflow-y-auto">
+              {searchResults.map((vehicle) => (
+                <button
+                  key={vehicle.id}
+                  onClick={() => handleVehicleSelectFromDropdown(vehicle.id)}
+                  className="w-full px-4 py-3 text-left hover:bg-gray-700 transition-colors border-b border-gray-700 last:border-b-0"
+                >
+                  <div className="flex items-center gap-2">
+                    <Car className="w-4 h-4 text-gray-400 flex-shrink-0" />
+                    <div className="flex-1 min-w-0">
+                      <div className="text-sm font-semibold text-white truncate">
+                        {vehicle.make} {vehicle.model}
+                      </div>
+                      <div className="text-xs text-gray-400">
+                        {vehicle.year}
+                      </div>
+                    </div>
+                  </div>
+                </button>
+              ))}
+            </div>
+          )}
         </div>
       </div>
 
       {/* Vehicle List */}
       <div className="flex-1 min-h-0 overflow-y-auto p-3 sm:p-4 lg:p-6 space-y-2 sm:space-y-3 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent">
+        {/* All Cars Button */}
+        <button
+          onClick={() => onVehicleSelect(null)}
+          className={`
+            w-full p-3 rounded-xl border-2 transition-all text-left
+            ${
+              selectedVehicle === null
+                ? 'border-orange-500 bg-orange-500/10 shadow-md shadow-orange-500/20'
+                : 'border-gray-700 bg-gray-800 hover:border-gray-600 hover:bg-gray-750'
+            }
+          `}
+        >
+          <div className="flex items-center gap-2">
+            <Car className={`w-4 h-4 ${selectedVehicle === null ? 'text-orange-500' : 'text-gray-400'}`} />
+            <span className={`font-semibold text-sm ${selectedVehicle === null ? 'text-orange-500' : 'text-white'}`}>
+              All Cars
+            </span>
+          </div>
+        </button>
+
         {filteredVehicles.length === 0 ? (
           <EmptyState
             icon={Car}
@@ -128,11 +221,7 @@ export default function VehiclePanel({
                 vehicle={vehicle}
                 subunits={vehicleSubunits}
                 isSelected={selectedVehicle === vehicle.id}
-                onClick={() =>
-                  onVehicleSelect(
-                    selectedVehicle === vehicle.id ? null : vehicle.id
-                  )
-                }
+                onClick={() => onVehicleSelect(vehicle.id)}
                 onSubunitStatusChange={onSubunitStatusChange}
                 loadingSubunits={loadingSubunits}
               />

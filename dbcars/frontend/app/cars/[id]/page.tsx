@@ -19,7 +19,6 @@ export default function VehicleDetailPage() {
   const [locations, setLocations] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
-  const [isScrolled, setIsScrolled] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [lightboxOpen, setLightboxOpen] = useState(false);
@@ -44,7 +43,6 @@ export default function VehicleDetailPage() {
   // Scroll progress
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 100);
       const windowHeight = window.innerHeight;
       const documentHeight = document.documentElement.scrollHeight;
       const scrollTop = window.scrollY;
@@ -415,19 +413,16 @@ export default function VehicleDetailPage() {
       {/* DatePicker Portal Container */}
       <div id="datepicker-portal"></div>
       
-      {/* Scroll Progress Bar */}
-      <div className="fixed top-0 left-0 right-0 z-50 h-1 bg-black/50">
-        <div 
-          className="h-full bg-gradient-to-r from-orange-500 via-orange-600 to-orange-500 transition-all duration-150"
-          style={{ width: `${scrollProgress}%` }}
-        ></div>
-      </div>
-
-      {/* Floating Header */}
-      <div className={`fixed top-0 left-0 right-0 z-40 transition-all duration-700 ${
-        isScrolled ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'
-      }`}>
-        <div className="bg-black/80 backdrop-blur-xl">
+      {/* Sticky Header - Always Visible */}
+      <div className="fixed top-0 left-0 right-0 z-40">
+        {/* Scroll Progress Bar - At top of header */}
+        <div className="h-1 bg-black">
+          <div 
+            className="h-full bg-gradient-to-r from-orange-500 via-orange-600 to-orange-500 transition-all duration-150"
+            style={{ width: `${scrollProgress}%` }}
+          ></div>
+        </div>
+        <div className="bg-black/80 backdrop-blur-xl border-b border-white/10">
           <div className="container mx-auto max-w-7xl px-4 md:px-10 py-3 md:py-6">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2 md:gap-8">

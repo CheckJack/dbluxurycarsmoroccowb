@@ -87,7 +87,7 @@ const fileFilter = (req: Request, file: Express.Multer.File, cb: multer.FileFilt
 const upload = multer({
   storage: storage,
   limits: {
-    fileSize: 5 * 1024 * 1024, // 5MB limit
+    fileSize: 20 * 1024 * 1024, // 20MB limit (increased for blog cover/hero images)
   },
   fileFilter: fileFilter,
 });
@@ -107,7 +107,7 @@ const handleUpload = (uploadMiddleware: any) => {
         
         if (err instanceof multer.MulterError) {
           if (err.code === 'LIMIT_FILE_SIZE') {
-            return res.status(400).json({ error: 'File size too large. Maximum size is 5MB.' });
+            return res.status(400).json({ error: 'File size too large. Maximum size is 20MB.' });
           }
           if (err.code === 'LIMIT_FILE_COUNT') {
             return res.status(400).json({ error: 'Too many files. Maximum is 10 files.' });

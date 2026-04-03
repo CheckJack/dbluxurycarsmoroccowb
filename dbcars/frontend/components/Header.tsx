@@ -27,8 +27,65 @@ export default function Header() {
   const isAboutPage = useMemo(() => pathname === '/about', [pathname]);
   const isCarsListingPage = useMemo(() => pathname === '/cars', [pathname]);
   const isCarsPage = useMemo(() => pathname === '/cars' || pathname?.startsWith('/cars/'), [pathname]);
+  const isIndividualCarPage = useMemo(() => pathname?.startsWith('/cars/') && pathname !== '/cars', [pathname]);
   const isBlogPage = useMemo(() => pathname === '/blog' || pathname?.startsWith('/blog/'), [pathname]);
   const hasHeroSection = isHomePage;
+  const isBlogListingPage = pathname === '/blog';
+  const isFAQPage = pathname === '/faq';
+  const isContactPage = pathname === '/contact';
+  const hasHeroHeader = isHomePage || isAboutPage || isBlogListingPage || isFAQPage || isContactPage || isCarsListingPage;
+
+  // Hero header (home + about): transparent at top; hide on scroll down; show black on scroll up
+  const [headerVisible, setHeaderVisible] = useState(true);
+  const [showBlackBg, setShowBlackBg] = useState(false);
+  const lastScrollY = useRef(0);
+  const rafId = useRef<number | null>(null);
+  const scrollThreshold = 100;
+  const scrollDeltaThreshold = 12;
+
+  useEffect(() => {
+    if (!hasHeroHeader) return;
+    const updateHeader = () => {
+      const y = window.scrollY;
+      const pastTop = y > scrollThreshold;
+
+      if (y <= scrollThreshold) {
+        // At top: always visible and transparent
+        setHeaderVisible(true);
+        setShowBlackBg(false);
+      } else {
+        const scrollingUp = y < lastScrollY.current;
+        const delta = Math.abs(y - lastScrollY.current);
+
+        if (scrollingUp && delta >= scrollDeltaThreshold) {
+          setHeaderVisible(true);
+          setShowBlackBg(true); // past top + scrolling up = show header with black
+        } else if (!scrollingUp && delta >= scrollDeltaThreshold) {
+          setHeaderVisible(false);
+          // keep showBlackBg as-is until next scroll up
+        }
+      }
+      lastScrollY.current = y;
+      rafId.current = null;
+    };
+    const handleScroll = () => {
+      if (rafId.current == null) {
+        rafId.current = requestAnimationFrame(updateHeader);
+      }
+    };
+    // Do NOT run on mount – keep initial state (visible, transparent) until user scrolls
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      if (rafId.current != null) cancelAnimationFrame(rafId.current);
+    };
+  }, [hasHeroHeader]);
+
+  const headerBg = hasHeroHeader
+    ? (showBlackBg && headerVisible ? 'bg-black' : 'bg-transparent')
+    : 'bg-black';
+  const heroHeaderFixed = hasHeroHeader;
+  const heroHeaderHidden = hasHeroHeader && !headerVisible;
 
   // Load locations only when needed (memoized to prevent unnecessary calls)
   useEffect(() => {
@@ -183,14 +240,16 @@ export default function Header() {
     setMounted(true);
   }, []);
 
-  // Don't show header on admin pages
-  if (isAdminPage) {
+  // Don't show header on admin pages or individual car pages
+  if (isAdminPage || isIndividualCarPage) {
     return null;
   }
 
   return (
     <header
-      className={`sticky top-0 z-50 transition-all ${isHomePage ? 'bg-transparent' : 'bg-black'}`}
+      className={`z-50 ${headerBg} ${
+        heroHeaderFixed ? 'fixed top-0 left-0 right-0' : 'relative'
+      } ${heroHeaderHidden ? 'opacity-0 pointer-events-none' : 'opacity-100'} ${hasHeroHeader ? 'transition-none' : 'transition-colors duration-200'}`}
     >
       <nav className="container mx-auto px-4 md:px-6 py-4 bg-transparent">
         <div className="flex items-center justify-between">
@@ -210,63 +269,6 @@ export default function Header() {
               unoptimized
             />
           </Link>
-
-          {/* Location and Date Fields (only on cars listing page) */}
-          {isCarsListingPage && (
-            <div className="hidden lg:flex items-center gap-3 flex-1 max-w-2xl mx-8">
-              {/* Pickup Location */}
-              <div className="flex-1">
-                <select
-                  value={pickupLocation}
-                  onChange={(e) => setPickupLocation(e.target.value)}
-                  className="w-full px-3 py-2 bg-white border border-gray-700 rounded-lg text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-white/50"
-                >
-                  <option value="">Pickup Location</option>
-                  {locations.map((loc) => (
-                    <option key={loc.id} value={loc.id}>
-                      {loc.name} - {loc.city}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              {/* Pickup Date */}
-              <div className="flex-1">
-                <DatePicker
-                  selected={pickupDate}
-                  onChange={(date: Date | null) => setPickupDate(date)}
-                  minDate={new Date()}
-                  showTimeSelect
-                  timeFormat="HH:mm"
-                  timeIntervals={30}
-                  timeCaption="Time"
-                  placeholderText="Pickup Date & Time"
-                  dateFormat="dd/MM/yyyy HH:mm"
-                  className="w-full px-3 py-2 bg-white border border-gray-700 rounded-lg text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
-                  wrapperClassName="w-full"
-                  withPortal
-                />
-              </div>
-
-              {/* Dropoff Date */}
-              <div className="flex-1">
-                <DatePicker
-                  selected={dropoffDate}
-                  onChange={(date: Date | null) => setDropoffDate(date)}
-                  minDate={pickupDate || new Date()}
-                  showTimeSelect
-                  timeFormat="HH:mm"
-                  timeIntervals={30}
-                  timeCaption="Time"
-                  placeholderText="Dropoff Date & Time"
-                  dateFormat="dd/MM/yyyy HH:mm"
-                  className="w-full px-3 py-2 bg-white border border-gray-700 rounded-lg text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
-                  wrapperClassName="w-full"
-                  withPortal
-                />
-              </div>
-            </div>
-          )}
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
@@ -352,63 +354,6 @@ export default function Header() {
             </svg>
           </button>
         </div>
-
-        {/* Mobile Location and Date Fields (only on cars listing page) */}
-        {isCarsListingPage && (
-          <div className="lg:hidden mt-4 space-y-3 pb-4">
-            {/* Pickup Location */}
-            <div>
-              <select
-                value={pickupLocation}
-                onChange={(e) => setPickupLocation(e.target.value)}
-                className="w-full px-3 py-2 bg-white border border-gray-700 rounded-lg text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-white/50"
-              >
-                <option value="">Pickup Location</option>
-                {locations.map((loc) => (
-                  <option key={loc.id} value={loc.id}>
-                    {loc.name} - {loc.city}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {/* Dates */}
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <DatePicker
-                  selected={pickupDate}
-                  onChange={(date: Date | null) => setPickupDate(date)}
-                  minDate={new Date()}
-                  showTimeSelect
-                  timeFormat="HH:mm"
-                  timeIntervals={30}
-                  timeCaption="Time"
-                  placeholderText="Pickup Date & Time"
-                  dateFormat="dd/MM/yyyy HH:mm"
-                  className="w-full px-3 py-2 bg-white border border-gray-700 rounded-lg text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
-                  wrapperClassName="w-full"
-                  withPortal
-                />
-              </div>
-              <div>
-                <DatePicker
-                  selected={dropoffDate}
-                  onChange={(date: Date | null) => setDropoffDate(date)}
-                  minDate={pickupDate || new Date()}
-                  showTimeSelect
-                  timeFormat="HH:mm"
-                  timeIntervals={30}
-                  timeCaption="Time"
-                  placeholderText="Dropoff Date & Time"
-                  dateFormat="dd/MM/yyyy HH:mm"
-                  className="w-full px-3 py-2 bg-white border border-gray-700 rounded-lg text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
-                  wrapperClassName="w-full"
-                  withPortal
-                />
-              </div>
-            </div>
-          </div>
-        )}
 
         {/* Mobile Navigation - Rendered via Portal to ensure highest z-index */}
         {mounted && isMenuOpen && createPortal(

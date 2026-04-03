@@ -22,6 +22,7 @@ import {
   ArrowLeft
 } from 'lucide-react';
 import LoadingSpinner from '@/components/admin/LoadingSpinner';
+import DragDropUpload from '@/components/admin/DragDropUpload';
 
 export default function NewVehiclePage() {
   const router = useRouter();
@@ -132,13 +133,12 @@ export default function NewVehiclePage() {
     });
   };
 
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
+  const handleImageUpload = async (files: File[]) => {
     if (!files || files.length === 0) return;
 
     setUploading(true);
     try {
-      const uploadPromises = Array.from(files).map((file) => uploadImage(file));
+      const uploadPromises = files.map((file) => uploadImage(file));
       const uploadedUrls = await Promise.all(uploadPromises);
 
       const newImages = uploadedUrls.filter((url) => !formData.images.includes(url));
@@ -153,7 +153,6 @@ export default function NewVehiclePage() {
       toast.error(errorMessage);
     } finally {
       setUploading(false);
-      e.target.value = '';
     }
   };
 
@@ -474,30 +473,20 @@ export default function NewVehiclePage() {
             <h3 className="text-lg sm:text-xl font-bold text-white">Images</h3>
           </div>
           <div className="space-y-4">
-            <div>
-              <label className="block mb-2">
-                <span className="sr-only">Upload images</span>
-                <div className="relative">
-                  <input
-                    type="file"
-                    accept="image/jpeg,image/jpg,image/png,image/gif,image/webp"
-                    multiple
-                    onChange={handleImageUpload}
-                    disabled={uploading}
-                    className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-gradient-to-r file:from-blue-600 file:to-blue-500 file:text-white hover:file:from-blue-700 hover:file:to-blue-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all cursor-pointer"
-                  />
-                </div>
-              </label>
-              <p className="text-xs text-gray-500 mt-2">
-                Select one or more images (JPEG, PNG, GIF, WebP). Max 5MB per image.
-              </p>
-              {uploading && (
-                <div className="mt-2 flex items-center gap-2 text-sm text-blue-600">
-                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
-                  Uploading images...
-                </div>
-              )}
-            </div>
+            <DragDropUpload
+              onFilesSelected={handleImageUpload}
+              accept="image/jpeg,image/jpg,image/png,image/gif,image/webp"
+              multiple={true}
+              disabled={uploading}
+              maxSize={5}
+              helperText="Select one or more images (JPEG, PNG, GIF, WebP). Max 5MB per image."
+            />
+            {uploading && (
+              <div className="flex items-center gap-2 text-sm text-blue-600">
+                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
+                Uploading images...
+              </div>
+            )}
             
             {formData.images.length > 0 && (
               <div className="space-y-3">

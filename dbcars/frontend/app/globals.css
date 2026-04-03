@@ -881,6 +881,11 @@ table tbody tr {
   background: rgba(0, 0, 0, 0.95);
 }
 
+/* Remove shadow below contact form */
+.contact-form-dark.glass-form-container {
+  box-shadow: none;
+}
+
 /* DatePicker Portal Positioning - Fix for desktop overflow */
 .react-datepicker-popper {
   z-index: 9999 !important;

@@ -28,6 +28,7 @@ import {
 import LoadingSpinner from '@/components/admin/LoadingSpinner';
 import EmptyState from '@/components/admin/EmptyState';
 import RichTextEditor from '@/components/admin/RichTextEditor';
+import DragDropUpload from '@/components/admin/DragDropUpload';
 
 interface BlogPost {
   id: string;
@@ -140,8 +141,8 @@ export default function AdminBlogPage() {
     setHeroImageKey((prev) => prev + 1);
   };
 
-  const handleCoverImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
+  const handleCoverImageUpload = async (files: File[]) => {
+    const file = files?.[0];
     if (!file) return;
 
     setUploadingCoverImage(true);
@@ -149,7 +150,6 @@ export default function AdminBlogPage() {
       const imageUrl = await uploadImage(file);
       setFormData((prev) => ({ ...prev, cover_image: imageUrl, featured_image: imageUrl }));
       toast.success('Cover image uploaded successfully');
-      setCoverImageKey((prev) => prev + 1); // Reset input
     } catch (error: any) {
       console.error('Error uploading cover image:', error);
       const errorMessage = error?.message || error?.response?.data?.error || 'Error uploading cover image';
@@ -159,8 +159,8 @@ export default function AdminBlogPage() {
     }
   };
 
-  const handleHeroImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
+  const handleHeroImageUpload = async (files: File[]) => {
+    const file = files?.[0];
     if (!file) return;
 
     setUploadingHeroImage(true);
@@ -168,7 +168,6 @@ export default function AdminBlogPage() {
       const imageUrl = await uploadImage(file);
       setFormData((prev) => ({ ...prev, hero_image: imageUrl }));
       toast.success('Hero image uploaded successfully');
-      setHeroImageKey((prev) => prev + 1); // Reset input
     } catch (error: any) {
       console.error('Error uploading hero image:', error);
       const errorMessage = error?.message || error?.response?.data?.error || 'Error uploading hero image';
@@ -182,7 +181,14 @@ export default function AdminBlogPage() {
     e.preventDefault();
     try {
       if (editingPost) {
-        await updateBlogPost(editingPost.id, formData);
+        // Convert empty strings to null for image fields when updating
+        const updateData = {
+          ...formData,
+          cover_image: formData.cover_image === '' ? null : formData.cover_image,
+          hero_image: formData.hero_image === '' ? null : formData.hero_image,
+          featured_image: formData.featured_image === '' ? null : formData.featured_image,
+        };
+        await updateBlogPost(editingPost.id, updateData);
         toast.success('Blog post updated successfully');
       } else {
         await createBlogPost(formData);
@@ -622,63 +628,79 @@ export default function AdminBlogPage() {
                 </div>
 
                 <div className="bg-gray-900 p-3 sm:p-4 lg:p-6 rounded-2xl shadow-sm border border-gray-800">
-                  <label className="block text-xs sm:text-sm font-semibold text-gray-300 mb-2">
-                    Cover Image <span className="text-gray-500 text-xs font-normal">(Displayed on blog listing page)</span>
-                  </label>
-                  <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-start sm:items-center">
-                    <div className="relative flex-1 w-full">
-                      <ImageIcon className="absolute left-2 sm:left-3 top-1/2 -translate-y-1/2 w-4 sm:w-5 h-4 sm:h-5 text-gray-400 pointer-events-none" />
-                      <input
-                        key={coverImageKey}
-                        type="file"
-                        accept="image/*"
-                        onChange={handleCoverImageUpload}
-                        className="w-full pl-8 sm:pl-10 pr-3 sm:pr-4 py-2 sm:py-2.5 text-xs sm:text-sm bg-gray-800 text-white border border-gray-700 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all"
-                        disabled={uploadingCoverImage}
-                      />
+                  <DragDropUpload
+                    onFilesSelected={handleCoverImageUpload}
+                    accept="image/*"
+                    multiple={false}
+                    disabled={uploadingCoverImage}
+                    maxSize={20}
+                    label="Cover Image"
+                    helperText="Displayed on blog listing page. Max 20MB."
+                  />
+                  {uploadingCoverImage && (
+                    <div className="mt-2 flex items-center gap-2 text-xs sm:text-sm text-blue-600">
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
+                      Uploading...
                     </div>
-                    {uploadingCoverImage && (
-                      <span className="text-xs sm:text-sm text-gray-400 font-medium whitespace-nowrap">Uploading...</span>
-                    )}
-                  </div>
+                  )}
                   {formData.cover_image && (
-                    <div className="mt-4">
+                    <div className="mt-4 relative">
                       <img
                         src={formData.cover_image}
                         alt="Cover"
                         className="w-full sm:max-w-md h-32 sm:h-48 object-cover rounded-xl border border-gray-800"
                       />
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setFormData((prev) => ({ ...prev, cover_image: '', featured_image: '' }));
+                          toast.success('Cover image removed');
+                        }}
+                        className="absolute top-2 right-2 p-2 bg-red-600 hover:bg-red-700 text-white rounded-lg shadow-lg transition-colors flex items-center gap-1 text-xs font-semibold"
+                        title="Remove cover image"
+                      >
+                        <X className="w-4 h-4" />
+                        Remove
+                      </button>
                     </div>
                   )}
                 </div>
 
                 <div className="bg-gray-900 p-3 sm:p-4 lg:p-6 rounded-2xl shadow-sm border border-gray-800">
-                  <label className="block text-xs sm:text-sm font-semibold text-gray-300 mb-2">
-                    Hero Image <span className="text-gray-500 text-xs font-normal">(Displayed on individual blog post hero section)</span>
-                  </label>
-                  <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-start sm:items-center">
-                    <div className="relative flex-1 w-full">
-                      <ImageIcon className="absolute left-2 sm:left-3 top-1/2 -translate-y-1/2 w-4 sm:w-5 h-4 sm:h-5 text-gray-400 pointer-events-none" />
-                      <input
-                        key={heroImageKey}
-                        type="file"
-                        accept="image/*"
-                        onChange={handleHeroImageUpload}
-                        className="w-full pl-8 sm:pl-10 pr-3 sm:pr-4 py-2 sm:py-2.5 text-xs sm:text-sm bg-gray-800 text-white border border-gray-700 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all"
-                        disabled={uploadingHeroImage}
-                      />
+                  <DragDropUpload
+                    onFilesSelected={handleHeroImageUpload}
+                    accept="image/*"
+                    multiple={false}
+                    disabled={uploadingHeroImage}
+                    maxSize={20}
+                    label="Hero Image"
+                    helperText="Displayed on individual blog post hero section. Max 20MB."
+                  />
+                  {uploadingHeroImage && (
+                    <div className="mt-2 flex items-center gap-2 text-xs sm:text-sm text-blue-600">
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
+                      Uploading...
                     </div>
-                    {uploadingHeroImage && (
-                      <span className="text-xs sm:text-sm text-gray-400 font-medium whitespace-nowrap">Uploading...</span>
-                    )}
-                  </div>
+                  )}
                   {formData.hero_image && (
-                    <div className="mt-4">
+                    <div className="mt-4 relative">
                       <img
                         src={formData.hero_image}
                         alt="Hero"
                         className="w-full sm:max-w-md h-32 sm:h-48 object-cover rounded-xl border border-gray-800"
                       />
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setFormData((prev) => ({ ...prev, hero_image: '' }));
+                          toast.success('Hero image removed');
+                        }}
+                        className="absolute top-2 right-2 p-2 bg-red-600 hover:bg-red-700 text-white rounded-lg shadow-lg transition-colors flex items-center gap-1 text-xs font-semibold"
+                        title="Remove hero image"
+                      >
+                        <X className="w-4 h-4" />
+                        Remove
+                      </button>
                     </div>
                   )}
                 </div>

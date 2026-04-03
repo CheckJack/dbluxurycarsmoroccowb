@@ -243,11 +243,10 @@ export default function Home() {
         />
       )}
       
-      {/* Hero Section with Video Background and Search Form - Separate from logo section */}
-      <div className="relative w-full" style={{ marginTop: '-120px', paddingTop: '120px' }}>
-        {/* Hero Section - Reduced size, extends behind header */}
-        <section className="relative w-full overflow-hidden bg-black" style={{ marginTop: '-120px', paddingTop: '120px', height: '88vh', minHeight: '700px' }}>
-        {/* Video Background - Extends behind header */}
+      {/* Hero Section: video + logos = single 100vh viewport */}
+      <section className="flex flex-col w-full bg-black overflow-hidden" style={{ height: '100vh' }}>
+        {/* Video part - fills space above logo strip */}
+        <div className="relative flex-1 min-h-0 w-full overflow-hidden">
         {!videoError && (
           <video
             ref={videoRef}
@@ -257,7 +256,6 @@ export default function Home() {
             playsInline
             preload="auto"
             className="absolute inset-0 w-full h-full object-cover z-0"
-            style={{ top: '-320px', height: 'calc(100% + 420px)' }}
             onError={(e) => {
               const video = e.target as HTMLVideoElement;
               console.error('Video error:', {
@@ -283,12 +281,12 @@ export default function Home() {
         )}
         {/* Fallback gradient background if video doesn't load */}
         {videoError && (
-          <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-gray-800 to-black z-0" style={{ top: '-320px', height: 'calc(100% + 420px)' }} />
+          <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-gray-800 to-black z-0" />
         )}
-        <div className="absolute inset-0 bg-black/40 z-10" style={{ top: '-320px', height: 'calc(100% + 420px)' }} />
+        <div className="absolute inset-0 bg-black/40 z-10" />
         
-        {/* Content Overlay - Positioned to be visible below header */}
-        <div className="absolute inset-0 z-20 flex items-center px-4 md:px-8 lg:px-12" style={{ top: '80px', height: 'calc(100% - 80px)' }}>
+        {/* Content Overlay - fills video area below fixed header */}
+        <div className="absolute inset-0 z-20 flex items-center px-4 md:px-8 lg:px-12" style={{ top: '80px', left: 0, right: 0, bottom: 0 }}>
           <div className="container mx-auto w-full max-w-7xl">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center">
               {/* Left Side - Title */}
@@ -455,25 +453,22 @@ export default function Home() {
             </div>
           </div>
         </div>
-        </section>
-      </div>
+        </div>
 
-      {/* Car Brands Marquee Section - Separate section - 15vh */}
-      <section className="relative bg-black h-[15vh] overflow-hidden border-t border-gray-800">
-        <div className="relative w-full h-full flex items-center">
-          {/* Scrolling Logos Container */}
-          <div className="flex animate-scroll">
-            {/* First set of logos */}
-            <div className="flex items-center px-8 flex-shrink-0" style={{ gap: '0.5rem' }}>
-              {carBrands.map((brand, index) => (
-                <BrandLogo key={`brand-1-${index}`} brand={brand} isMercedes={brand.name === 'Mercedes-Benz'} />
-              ))}
-            </div>
-            {/* Duplicate set for seamless loop */}
-            <div className="flex items-center px-8 flex-shrink-0" style={{ gap: '0.5rem' }}>
-              {carBrands.map((brand, index) => (
-                <BrandLogo key={`brand-2-${index}`} brand={brand} isMercedes={brand.name === 'Mercedes-Benz'} />
-              ))}
+        {/* Logo strip - same hero section, 100vh total */}
+        <div className="flex-shrink-0 w-full bg-black overflow-hidden border-t border-gray-800" style={{ height: '15vh' }}>
+          <div className="relative w-full h-full flex items-center">
+            <div className="flex animate-scroll">
+              <div className="flex items-center px-8 flex-shrink-0" style={{ gap: '0.5rem' }}>
+                {carBrands.map((brand, index) => (
+                  <BrandLogo key={`brand-1-${index}`} brand={brand} isMercedes={brand.name === 'Mercedes-Benz'} />
+                ))}
+              </div>
+              <div className="flex items-center px-8 flex-shrink-0" style={{ gap: '0.5rem' }}>
+                {carBrands.map((brand, index) => (
+                  <BrandLogo key={`brand-2-${index}`} brand={brand} isMercedes={brand.name === 'Mercedes-Benz'} />
+                ))}
+              </div>
             </div>
           </div>
         </div>
@@ -502,8 +497,8 @@ export default function Home() {
             >
               <div className="absolute inset-0 bg-black/15 group-hover:bg-black/5 transition-all duration-300"></div>
               <div className="aspect-square flex flex-col items-center justify-center p-6 text-white relative z-10">
-                <h3 className="text-lg md:text-xl font-bold text-center group-hover:opacity-0 transition-opacity duration-300">Luxury Sedans</h3>
-                <p className="text-sm text-gray-200 text-center mt-2 group-hover:opacity-0 transition-opacity duration-300">Premium Comfort</p>
+                <h3 className="text-lg md:text-xl font-bold text-center">Luxury Sedans</h3>
+                <p className="text-sm text-gray-200 text-center mt-2">Premium Comfort</p>
               </div>
             </Link>
 
@@ -519,8 +514,8 @@ export default function Home() {
             >
               <div className="absolute inset-0 bg-black/15 group-hover:bg-black/5 transition-all duration-300"></div>
               <div className="aspect-square flex flex-col items-center justify-center p-6 text-white relative z-10">
-                <h3 className="text-lg md:text-xl font-bold text-center group-hover:opacity-0 transition-opacity duration-300">Economic</h3>
-                <p className="text-sm text-gray-200 text-center mt-2 group-hover:opacity-0 transition-opacity duration-300">Affordable & Efficient</p>
+                <h3 className="text-lg md:text-xl font-bold text-center">Economic</h3>
+                <p className="text-sm text-gray-200 text-center mt-2">Affordable & Efficient</p>
               </div>
             </Link>
 
@@ -536,8 +531,8 @@ export default function Home() {
             >
               <div className="absolute inset-0 bg-black/15 group-hover:bg-black/5 transition-all duration-300"></div>
               <div className="aspect-square flex flex-col items-center justify-center p-6 text-white relative z-10">
-                <h3 className="text-lg md:text-xl font-bold text-center group-hover:opacity-0 transition-opacity duration-300">Sportscars</h3>
-                <p className="text-sm text-gray-200 text-center mt-2 group-hover:opacity-0 transition-opacity duration-300">High Performance</p>
+                <h3 className="text-lg md:text-xl font-bold text-center">Sportscars</h3>
+                <p className="text-sm text-gray-200 text-center mt-2">High Performance</p>
               </div>
             </Link>
 
@@ -553,8 +548,8 @@ export default function Home() {
             >
               <div className="absolute inset-0 bg-black/15 group-hover:bg-black/5 transition-all duration-300"></div>
               <div className="aspect-square flex flex-col items-center justify-center p-6 text-white relative z-10">
-                <h3 className="text-lg md:text-xl font-bold text-center group-hover:opacity-0 transition-opacity duration-300">Supercars</h3>
-                <p className="text-sm text-gray-200 text-center mt-2 group-hover:opacity-0 transition-opacity duration-300">Ultimate Performance</p>
+                <h3 className="text-lg md:text-xl font-bold text-center">Supercars</h3>
+                <p className="text-sm text-gray-200 text-center mt-2">Ultimate Performance</p>
               </div>
             </Link>
 
@@ -570,8 +565,8 @@ export default function Home() {
             >
               <div className="absolute inset-0 bg-black/15 group-hover:bg-black/5 transition-all duration-300"></div>
               <div className="aspect-square flex flex-col items-center justify-center p-6 text-white relative z-10">
-                <h3 className="text-lg md:text-xl font-bold text-center group-hover:opacity-0 transition-opacity duration-300">SUVs</h3>
-                <p className="text-sm text-gray-200 text-center mt-2 group-hover:opacity-0 transition-opacity duration-300">Spacious & Powerful</p>
+                <h3 className="text-lg md:text-xl font-bold text-center">SUVs</h3>
+                <p className="text-sm text-gray-200 text-center mt-2">Spacious & Powerful</p>
               </div>
             </Link>
           </div>
@@ -586,8 +581,8 @@ export default function Home() {
         {/* Background Image */}
         <div className="absolute inset-0 z-0">
           <Image
-            src="/mclaren-background.png"
-            alt="McLaren 720S in desert landscape"
+            src="/Untitled-design-85.png"
+            alt="Luxury cars background"
             fill
             className="object-cover"
             priority

@@ -2,6 +2,7 @@
 
 import { Plus, AlertCircle } from 'lucide-react';
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 type DayStatus =
   | 'available'
@@ -82,6 +83,7 @@ export default function CalendarDayCell({
   onEditNote,
   onDeleteNote,
 }: CalendarDayCellProps) {
+  const router = useRouter();
   const [isHovered, setIsHovered] = useState(false);
   const [showNoteTooltip, setShowNoteTooltip] = useState<string | null>(null);
   const [showBookingTooltip, setShowBookingTooltip] = useState(false);
@@ -159,9 +161,21 @@ export default function CalendarDayCell({
               <div className="space-y-2 max-h-48 overflow-y-auto">
                 {dayInfo.bookings.map((booking: any, index: number) => (
                   <div key={index} className="border-b border-gray-800 pb-2 last:border-0">
-                    <div className="font-semibold text-blue-300">
-                      {booking.booking_number || `Booking ${index + 1}`}
-                    </div>
+                    {booking.booking_number ? (
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          router.push(`/admin/bookings/${booking.booking_number}`);
+                        }}
+                        className="font-semibold text-blue-300 hover:text-blue-200 hover:underline cursor-pointer"
+                      >
+                        {booking.booking_number}
+                      </button>
+                    ) : (
+                      <div className="font-semibold text-blue-300">
+                        Booking {index + 1}
+                      </div>
+                    )}
                     <div className="text-gray-300 mt-1">
                       <div>Customer: {booking.first_name} {booking.last_name}</div>
                       <div>Status: <span className="capitalize">{booking.status || booking.booking_status}</span></div>
@@ -305,9 +319,21 @@ export default function CalendarDayCell({
                     .filter((b: any) => (b.status || b.booking_status) !== 'cancelled')
                     .map((booking: any, index: number) => (
                       <div key={index} className="bg-red-800/50 p-2 rounded border border-red-700">
-                        <div className="font-semibold text-red-100">
-                          {booking.booking_number || `Booking ${index + 1}`}
-                        </div>
+                        {booking.booking_number ? (
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              router.push(`/admin/bookings/${booking.booking_number}`);
+                            }}
+                            className="font-semibold text-red-100 hover:text-red-50 hover:underline cursor-pointer"
+                          >
+                            {booking.booking_number}
+                          </button>
+                        ) : (
+                          <div className="font-semibold text-red-100">
+                            Booking {index + 1}
+                          </div>
+                        )}
                         <div className="text-[10px] text-red-200 mt-1">
                           {new Date(booking.pickup_date).toLocaleDateString('en-GB', { 
                             day: '2-digit', 

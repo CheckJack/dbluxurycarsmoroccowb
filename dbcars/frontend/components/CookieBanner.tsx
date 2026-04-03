@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import {
@@ -12,6 +13,7 @@ import {
 } from '@/lib/cookieConsent';
 
 export default function CookieBanner() {
+  const pathname = usePathname();
   const [isVisible, setIsVisible] = useState(false);
   const [showPreferences, setShowPreferences] = useState(false);
   const [consent, setConsent] = useState<CookieConsent | null>(null);
@@ -24,6 +26,11 @@ export default function CookieBanner() {
       setConsent(currentConsent);
     }
   }, []);
+
+  // Hide cookie banner on admin pages
+  if (pathname?.startsWith('/admin')) {
+    return null;
+  }
 
   const handleAcceptAll = () => {
     acceptAllCookies();

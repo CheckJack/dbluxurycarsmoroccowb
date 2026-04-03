@@ -76,6 +76,16 @@ api.interceptors.response.use(
       // Only log non-401 errors to reduce console noise
       if (error.response.status !== 401) {
         console.error('API Error:', error.response.status, error.response.data);
+        // Log more details for debugging
+        if (error.response.status === 400) {
+          console.error('Validation error details:', {
+            status: error.response.status,
+            data: error.response.data,
+            url: error.config?.url,
+            method: error.config?.method,
+            requestData: error.config?.data
+          });
+        }
       }
       return Promise.reject(error);
     } else if (error.request) {
@@ -402,7 +412,7 @@ export const uploadImage = async (file: File): Promise<string> => {
       'Content-Type': 'multipart/form-data',
       Authorization: `Bearer ${localStorage.getItem('auth_token')}`,
     },
-      timeout: 30000, // 30 seconds timeout for file uploads
+      timeout: 120000, // 120 seconds (2 minutes) timeout for large file uploads
   });
 
     if (!response.data || !response.data.url) {
@@ -414,12 +424,22 @@ export const uploadImage = async (file: File): Promise<string> => {
   return `${baseUrl}${response.data.url}`;
   } catch (error: any) {
     console.error('Upload error:', error);
+    if (error.code === 'ECONNABORTED' || error.message?.includes('timeout')) {
+      // Timeout error
+      const fileSizeMB = (file.size / (1024 * 1024)).toFixed(2);
+      throw new Error(`Upload timeout. The file (${fileSizeMB}MB) may be too large or your connection is slow. Please try a smaller image or check your internet connection.`);
+    }
     if (error.response) {
       // Server responded with error status
-      throw new Error(error.response.data?.error || error.response.data?.message || 'Failed to upload image');
+      const errorMessage = error.response.data?.error || error.response.data?.message || 'Failed to upload image';
+      // Provide more helpful message for file size errors
+      if (errorMessage.includes('too large') || errorMessage.includes('LIMIT_FILE_SIZE')) {
+        throw new Error('File is too large. Maximum size is 20MB. Please compress the image and try again.');
+      }
+      throw new Error(errorMessage);
     } else if (error.request) {
       // Request was made but no response received
-      throw new Error('Network error: Could not connect to server');
+      throw new Error('Network error: Could not connect to server. Please check your internet connection and try again.');
     } else {
       // Something else happened
       throw new Error(error.message || 'Failed to upload image');
@@ -439,7 +459,7 @@ export const uploadImages = async (files: File[]): Promise<string[]> => {
       'Content-Type': 'multipart/form-data',
       Authorization: `Bearer ${localStorage.getItem('auth_token')}`,
     },
-      timeout: 60000, // 60 seconds timeout for multiple file uploads
+      timeout: 120000, // 120 seconds (2 minutes) timeout for multiple file uploads
   });
 
     if (!response.data || !response.data.urls || !Array.isArray(response.data.urls)) {
@@ -451,12 +471,22 @@ export const uploadImages = async (files: File[]): Promise<string[]> => {
   return response.data.urls.map((url: string) => `${baseUrl}${url}`);
   } catch (error: any) {
     console.error('Upload error:', error);
+    if (error.code === 'ECONNABORTED' || error.message?.includes('timeout')) {
+      // Timeout error
+      const totalSizeMB = files.reduce((sum, file) => sum + file.size, 0) / (1024 * 1024);
+      throw new Error(`Upload timeout. The files (${totalSizeMB.toFixed(2)}MB total) may be too large or your connection is slow. Please try smaller images or check your internet connection.`);
+    }
     if (error.response) {
       // Server responded with error status
-      throw new Error(error.response.data?.error || error.response.data?.message || 'Failed to upload images');
+      const errorMessage = error.response.data?.error || error.response.data?.message || 'Failed to upload images';
+      // Provide more helpful message for file size errors
+      if (errorMessage.includes('too large') || errorMessage.includes('LIMIT_FILE_SIZE')) {
+        throw new Error('One or more files are too large. Maximum size per file is 20MB. Please compress the images and try again.');
+      }
+      throw new Error(errorMessage);
     } else if (error.request) {
       // Request was made but no response received
-      throw new Error('Network error: Could not connect to server');
+      throw new Error('Network error: Could not connect to server. Please check your internet connection and try again.');
     } else {
       // Something else happened
       throw new Error(error.message || 'Failed to upload images');
@@ -610,6 +640,8 @@ export const updateBlogPost = async (
     content?: string;
     excerpt?: string;
     featured_image?: string;
+    cover_image?: string | null;
+    hero_image?: string | null;
     is_published?: boolean;
   }
 ) => {

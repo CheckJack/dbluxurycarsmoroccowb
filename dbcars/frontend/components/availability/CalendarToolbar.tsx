@@ -7,7 +7,7 @@ interface CalendarToolbarProps {
   year: number;
   onPrevMonth: () => void;
   onNextMonth: () => void;
-  onToday: () => void;
+  onToday?: () => void;
 }
 
 export default function CalendarToolbar({
@@ -15,7 +15,6 @@ export default function CalendarToolbar({
   year,
   onPrevMonth,
   onNextMonth,
-  onToday,
 }: CalendarToolbarProps) {
   return (
     <div className="flex items-center justify-between px-3 sm:px-4 lg:px-6 py-3 sm:py-4 border-b border-gray-800 bg-gray-900 shadow-sm">
@@ -41,12 +40,6 @@ export default function CalendarToolbar({
           <ChevronRight className="w-4 sm:w-5 h-4 sm:h-5" />
         </button>
       </div>
-      <button
-        onClick={onToday}
-        className="px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-semibold text-gray-300 bg-gray-800 rounded-xl hover:bg-gray-200 transition-all"
-      >
-        Today
-      </button>
     </div>
   );
 }

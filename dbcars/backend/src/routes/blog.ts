@@ -179,15 +179,15 @@ router.put(
       }
       if (featured_image !== undefined) {
         updates.push(`featured_image = $${paramCount++}`);
-        values.push(featured_image);
+        values.push(featured_image === '' ? null : featured_image);
       }
       if (cover_image !== undefined) {
         updates.push(`cover_image = $${paramCount++}`);
-        values.push(cover_image);
+        values.push(cover_image === '' ? null : cover_image);
       }
       if (hero_image !== undefined) {
         updates.push(`hero_image = $${paramCount++}`);
-        values.push(hero_image);
+        values.push(hero_image === '' ? null : hero_image);
       }
       if (is_published !== undefined) {
         updates.push(`is_published = $${paramCount++}`);
